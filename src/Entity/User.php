@@ -5,11 +5,23 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ApiResource()
+ *  @ApiResource(
+* collectionOperations={
+* "get_apprenants"={
+* "method"="GET",
+* "path"="/apprenants" ,
+* "normalization_context"={"groups":"apprenant:read"},
+* "access_control"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+* "access_control_message"="Vous n'avez pas access à cette Ressource",
+* "route_name"="apprenant_liste",
+*
+* }
+* })
  */
 class User implements UserInterface
 {
@@ -17,11 +29,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"apprenant:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"apprenant:read"})
      */
     private $login;
 
@@ -35,11 +49,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"apprenant:read"})
      */
     private $nomComplet;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
+     * @Groups({"apprenant:read"})
      */
     private $profil;
 
